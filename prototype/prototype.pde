@@ -18,7 +18,7 @@ JSONObject jsonData;
 JSONObject weatherObj;
 JSONArray weatherData;
 String weatherTime;
-String apiKey = "REMOVED";
+String apiKey = "appid=REMOVED";
 String locationKey = "id=2925533";         // Frankfurt am Main
 //String locationKey = "q=kolkata,in";    // Example locationKey for use without location ID
 String apiQuery = "http://api.openweathermap.org/data/2.5/forecast?units=metric&" + locationKey + "&" + apiKey;
@@ -103,7 +103,7 @@ void draw() {
 
   for (int i = 0; i < 4; i++) {
     rows[i].setTemperature(i);
-    rows[i].binarize();
+    rows[i].binarizeTemperature();
     rows[i].setColor();
     rows[i].display();
     ypos = (ypos + border + boxsize);
@@ -133,7 +133,7 @@ public class Row {
     }
   }
 
-  void binarize() {      // Uses binary() to turn temperature ints into arrays containing chars of either 0 or 1
+  void binarizeTemperature() {      // Uses binary() to turn temperature ints into arrays containing chars of either 0 or 1
     binarray = (binary(temperature, 7)).toCharArray();
   }
 
