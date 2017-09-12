@@ -1,0 +1,13 @@
+Weather conditions to distinguish:
+
+clear: 800, 951
+light clouds: 801, 802
+heavy clouds: 803, 804
+light rain / drizzle: 300, 301, 310, 311, 313, 321, 500, 520, 521, 531
+heavy rain: 302, 312, 314, 501, 502, 503, 504, 522, 906
+thunderstorm: 200, 201, 202, 210, 211, 212, 221, 230, 231, 232
+light snow: 511, 600, 611, 612, 615, 620
+heavy snow: 601, 602, 616, 621, 62
+mist / fog: 701, 711, 721, 731, 741, 751, 761, 762
+wind / light storm: 771, 903, 904, 905, 952, 953, 954, 955, 956, 957
+storm / hurricane / tornado etc.: 781, 900, 901, 902, 958, 959, 960, 961, 962
