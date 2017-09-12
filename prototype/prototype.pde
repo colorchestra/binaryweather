@@ -4,6 +4,22 @@ int[] temperatures = { 10, 20, 30, 5, };
 String[] daytimes = { "06:00:00", "12:00:00", "18:00:00", "00:00:00" };
 int[] weatherIds = { 666, 666, 666, 666 };
 
+// OWM Weather condition codes categorization
+String wClear = "800, 951";
+String wLightClouds = "801, 802";
+String wHeavyClouds = "803, 804";
+String wLightRainDrizzle = "300, 301, 310, 311, 313, 321, 500, 520, 521, 531";
+String wHeavyRain = "302, 312, 314, 501, 502, 503, 504, 522, 906";
+String wThunderstorm = "200, 201, 202, 210, 211, 212, 221, 230, 231, 232";
+String wLightSnow = "511, 600, 611, 612, 615, 620";
+String wHeavySnow = "601, 602, 616, 621, 62";
+String wMistFog = "701, 711, 721, 731, 741, 751, 761, 762";
+String wWindLightStorm = "771, 903, 904, 905, 952, 953, 954, 955, 956, 957";
+String wStormHurricaneTornado = "781, 900, 901, 902, 958, 959, 960, 961, 962";
+
+String[] weatherConditions = { "wClear", "wLightClouds", "wHeavyClouds", "wLightRainDrizzle", "wHeavyRain", "wThunderstorm", "wLightSnow", "wHeavySnow", "wMistFog", "wWindLightStorm", "wStormHurricaneTornado" };
+color[] weatherConditionColors = { color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), };
+
 int border = 5;
 int boxsize = 75;
 int checkFrequency = 600000;             // How often the weather data is refreshed, in milliseconds
@@ -20,13 +36,14 @@ JSONArray weatherData;
 String weatherTime;
 String apiKey = "appid=REMOVED";
 String locationKey = "id=2925533";         // Frankfurt am Main
-//String locationKey = "q=kolkata,in";    // Example locationKey for use without location ID
+//String locationKey = "q=kolkata,in";     // Example locationKey for use without location ID
 String apiQuery = "http://api.openweathermap.org/data/2.5/forecast?units=metric&" + locationKey + "&" + apiKey;
 
 void setup() {
   size(565, 325);
   background(100);
   fill(255);
+  colorMode(HSB, 100);
 
   for (int i = 0; i < rows.length; i++) {
     rows[i] = new Row();
@@ -103,6 +120,7 @@ void draw() {
 
   for (int i = 0; i < 4; i++) {
     rows[i].setTemperature(i);
+    rows[i].setWeatherId(i);
     rows[i].binarizeTemperature();
     rows[i].setColor();
     rows[i].display();
@@ -141,9 +159,21 @@ public class Row {
     rows[i].temperature = temperatures[i];
     return temperature;
   }
+  
+  int setWeatherId(int i) {
+    rows[i].weatherId = weatherIds[i];
+    return weatherId;
+  }
 
   color setColor() {    // Work in progress - colors should be kinda according to weather IDs
-    rowColor = 255;
-    return(255);
+    for (int i = 0; i < weatherConditions.length; i++) {
+      String condCodes = weatherConditions[i];
+      if (condCodes.contains(str(weatherId))) {
+        return weatherConditionColors[i];
+      }
+    }
   }
+
+//    rowColor = 255;
+//    return(255);
 }
