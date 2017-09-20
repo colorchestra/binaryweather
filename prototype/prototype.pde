@@ -5,6 +5,7 @@ String[] daytimes = { "06:00:00", "12:00:00", "18:00:00", "00:00:00" };
 int[] weatherIds = { 666, 666, 666, 666 };
 
 // OWM Weather condition codes categorization
+/* Perhaps unnecessary
 String wClear = "800, 951";
 String wLightClouds = "801, 802";
 String wHeavyClouds = "803, 804";
@@ -12,13 +13,14 @@ String wLightRainDrizzle = "300, 301, 310, 311, 313, 321, 500, 520, 521, 531";
 String wHeavyRain = "302, 312, 314, 501, 502, 503, 504, 522, 906";
 String wThunderstorm = "200, 201, 202, 210, 211, 212, 221, 230, 231, 232";
 String wLightSnow = "511, 600, 611, 612, 615, 620";
-String wHeavySnow = "601, 602, 616, 621, 62";
+String wHeavySnow = "601, 602, 616, 621, 622";
 String wMistFog = "701, 711, 721, 731, 741, 751, 761, 762";
 String wWindLightStorm = "771, 903, 904, 905, 952, 953, 954, 955, 956, 957";
 String wStormHurricaneTornado = "781, 900, 901, 902, 958, 959, 960, 961, 962";
+*/
 
-String[] weatherConditions = { "wClear", "wLightClouds", "wHeavyClouds", "wLightRainDrizzle", "wHeavyRain", "wThunderstorm", "wLightSnow", "wHeavySnow", "wMistFog", "wWindLightStorm", "wStormHurricaneTornado" };
-color[] weatherConditionColors = { color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), color(80,80,80), };
+String[] weatherConditions = { "wClear - 800, 951", "wLightClouds - 801, 802", "wHeavyClouds - 803, 804", "wLightRainDrizzle 300, 301, 310, 311, 313, 321, 500, 520, 521, 531", "wHeavyRain - 302, 312, 314, 501, 502, 503, 504, 522, 906", "wThunderstorm - 200, 201, 202, 210, 211, 212, 221, 230, 231, 232", "wLightSnow - 511, 600, 611, 612, 615, 620", "wHeavySnow - 601, 602, 616, 621, 622", "wMistFog - 701, 711, 721, 731, 741, 751, 761, 762", "wWindLightStorm - 771, 903, 904, 905, 952, 953, 954, 955, 956, 957", "wStormHurricaneTornado - 781, 900, 901, 902, 958, 959, 960, 961, 962" };
+color[] weatherConditionColors = { color(255,220,20), color(227,212,128), color(198,198,198), color(188,230,242), color(77,207,245), color(216,170,172), color(234,234,234), color(255,255,255), color(80,80,80), color(80,80,80), color(80,80,80) };
 
 int border = 5;
 int boxsize = 75;
@@ -27,7 +29,7 @@ int ypos = border;
 int weatherId;
 int weatherTemperature;
 int timer;
-String dateTomorrow = "2017-09-12";
+String dateTomorrow = "2017-09-21";
 // String getDate = year() + "-" + month() + "-" + day();
 color rowColor;
 JSONObject jsonData;
@@ -41,9 +43,9 @@ String apiQuery = "http://api.openweathermap.org/data/2.5/forecast?units=metric&
 
 void setup() {
   size(565, 325);
-  background(100);
-  fill(255);
-  colorMode(HSB, 100);
+  colorMode(RGB);
+  background(30,30,30);
+  fill(50);
 
   for (int i = 0; i < rows.length; i++) {
     rows[i] = new Row();
@@ -119,11 +121,11 @@ void getTomorrowsWeather() {          // Pulls relevant data from weatherData an
 void draw() {
 
   for (int i = 0; i < 4; i++) {
-    rows[i].setTemperature(i);
-    rows[i].setWeatherId(i);
-    rows[i].binarizeTemperature();
-    rows[i].setColor();
-    rows[i].display();
+    rows[i].setTemperature(i);        // Sets "temperature" instance variable to corresponding value from temperatures[]
+    rows[i].setWeatherId(i);          // Sets "weatherId" instance variable to corresponding value from weatherIds[]
+    rows[i].binarizeTemperature();    // Uses binary() to turn temperature ints into arrays containing chars of either 0 or 1
+    rows[i].setColor(i);              // FUCKING SUCKS man
+    rows[i].display(i);
     ypos = (ypos + border + boxsize);
   }
   if (millis() - timer >= checkFrequency) {   // re-check weather in the frequency set in checkFrequency
@@ -136,14 +138,15 @@ void draw() {
 public class Row {
   int temperature;
   int weatherId;
+  int rowColor;
 
   Row() {
   }
 
-  void display() {
+  void display(int j) {
     for (int i = 0; i < 7; i++) {
       if (binarray[i] == '1') {
-        fill(rowColor);
+        fill(rows[j].rowColor);
       } else {
         fill(0);
       }
@@ -151,7 +154,7 @@ public class Row {
     }
   }
 
-  void binarizeTemperature() {      // Uses binary() to turn temperature ints into arrays containing chars of either 0 or 1
+  void binarizeTemperature() {
     binarray = (binary(temperature, 7)).toCharArray();
   }
 
@@ -165,15 +168,14 @@ public class Row {
     return weatherId;
   }
 
-  color setColor() {    // Work in progress - colors should be kinda according to weather IDs
+  void setColor(int j) {    // Work in progress - colors should be kinda according to weather IDs
     for (int i = 0; i < weatherConditions.length; i++) {
       String condCodes = weatherConditions[i];
-      if (condCodes.contains(str(weatherId))) {
-        return weatherConditionColors[i];
+//      println((str(rows[j].weatherId)));
+      if (condCodes.contains(str(rows[j].weatherId))) {
+        rows[j].rowColor = (weatherConditionColors[i]);
+        println(rows[j].rowColor);
       }
     }
   }
-
-//    rowColor = 255;
-//    return(255);
 }
