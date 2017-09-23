@@ -1,23 +1,13 @@
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 Row[] rows = new Row [4];
 char[] binarray = new char[7];
 int[] temperatures = { 10, 20, 30, 5, };
 String[] daytimes = { "06:00:00", "12:00:00", "18:00:00", "00:00:00" };
 int[] weatherIds = { 666, 666, 666, 666 };
-
-// OWM Weather condition codes categorization
-/* Perhaps unnecessary
-String wClear = "800, 951";
-String wLightClouds = "801, 802";
-String wHeavyClouds = "803, 804";
-String wLightRainDrizzle = "300, 301, 310, 311, 313, 321, 500, 520, 521, 531";
-String wHeavyRain = "302, 312, 314, 501, 502, 503, 504, 522, 906";
-String wThunderstorm = "200, 201, 202, 210, 211, 212, 221, 230, 231, 232";
-String wLightSnow = "511, 600, 611, 612, 615, 620";
-String wHeavySnow = "601, 602, 616, 621, 622";
-String wMistFog = "701, 711, 721, 731, 741, 751, 761, 762";
-String wWindLightStorm = "771, 903, 904, 905, 952, 953, 954, 955, 956, 957";
-String wStormHurricaneTornado = "781, 900, 901, 902, 958, 959, 960, 961, 962";
-*/
+SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
 
 String[] weatherConditions = { "wClear - 800, 951", "wLightClouds - 801, 802", "wHeavyClouds - 803, 804", "wLightRainDrizzle 300, 301, 310, 311, 313, 321, 500, 520, 521, 531", "wHeavyRain - 302, 312, 314, 501, 502, 503, 504, 522, 906", "wThunderstorm - 200, 201, 202, 210, 211, 212, 221, 230, 231, 232", "wLightSnow - 511, 600, 611, 612, 615, 620", "wHeavySnow - 601, 602, 616, 621, 622", "wMistFog - 701, 711, 721, 731, 741, 751, 761, 762", "wWindLightStorm - 771, 903, 904, 905, 952, 953, 954, 955, 956, 957", "wStormHurricaneTornado - 781, 900, 901, 902, 958, 959, 960, 961, 962" };
 color[] weatherConditionColors = { color(255,220,20), color(227,212,128), color(198,198,198), color(188,230,242), color(77,207,245), color(216,170,172), color(234,234,234), color(255,255,255), color(80,80,80), color(80,80,80), color(80,80,80) };
@@ -29,14 +19,14 @@ int ypos = border;
 int weatherId;
 int weatherTemperature;
 int timer;
-String dateTomorrow = "2017-09-21";
-// String getDate = year() + "-" + month() + "-" + day();
+String dateTomorrow;
+
 color rowColor;
 JSONObject jsonData;
 JSONObject weatherObj;
 JSONArray weatherData;
 String weatherTime;
-String apiKey = "appid=REMOVED";
+String apiKey = "appid=244a167227dd936e48f035770111a5fe";
 String locationKey = "id=2925533";         // Frankfurt am Main
 //String locationKey = "q=kolkata,in";     // Example locationKey for use without location ID
 String apiQuery = "http://api.openweathermap.org/data/2.5/forecast?units=metric&" + locationKey + "&" + apiKey;
@@ -51,7 +41,10 @@ void setup() {
     rows[i] = new Row();
   }
   
-  weatherData = getWeatherData();        // Puts JSON data into weatherData
+  weatherData = getWeatherData();        // Puts raw JSON data into weatherData
+  
+  updateCalendar();                      // Updates calendar "cal" to tomorrow's date
+  println(dateTomorrow);
 
   /*                                     // Debug shizzle
    weatherId = getWeatherIdFromArr(0);
@@ -76,13 +69,6 @@ JSONArray getWeatherData() {            // Pulls weather data as JSONArray from 
   weatherData = jsonData.getJSONArray("list");
   return(weatherData);
 }
-
-/*
-JSONObject getJsonObjectFromArr(int objectNr) {    // Are we sure we need this?
-  weatherObj = weatherData.getJSONObject(objectNr);
-  return(weatherObj);
-}
-*/
 
 int getWeatherIdFromArr(int objectNr) {  // Gets OWM's weather condition codes from weatherData, more info here: http://openweathermap.org/weather-conditions
   JSONObject idObj = weatherData.getJSONObject(objectNr);
@@ -118,6 +104,14 @@ void getTomorrowsWeather() {          // Pulls relevant data from weatherData an
     }
   }
 }
+
+void updateCalendar() {            // Updates calendar "cal" to tomorrow's date
+  Calendar cal = Calendar.getInstance();
+  cal.setTime(new Date());
+  cal.add(Calendar.DATE, 1);
+  dateTomorrow = dateformat.format(cal.getTime());
+}
+
 void draw() {
 
   for (int i = 0; i < 4; i++) {
