@@ -26,7 +26,7 @@ JSONObject jsonData;
 JSONObject weatherObj;
 JSONArray weatherData;
 String weatherTime;
-String apiKey = "appid=244a167227dd936e48f035770111a5fe";
+String apiKey = "appid=REMOVED";
 String locationKey = "id=2925533";         // Frankfurt am Main
 //String locationKey = "q=kolkata,in";     // Example locationKey for use without location ID
 String apiQuery = "http://api.openweathermap.org/data/2.5/forecast?units=metric&" + locationKey + "&" + apiKey;
